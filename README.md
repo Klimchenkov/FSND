@@ -5,10 +5,13 @@
 1. [Motivation for the project](#motivation)
 2. [URL location for the hosted API](#URL)
 3. [Deploy and run the project locally](#Local_run)
+4. [API documentation](#API)
+5. [Testing](#tests)
+6. [RBAC controls](#RBAC)
 
 <a name="motivation"></a>
 
-##Motivation for the project
+## Motivation for the project
 
 The Casting Agency models a company that is responsible for creating movies and managing and assigning actors to those movies. The Executive Producer of company wants to create a system to simplify and streamline the working process.
 
@@ -16,9 +19,9 @@ The Casting Agency models a company that is responsible for creating movies and 
 
 ## URL location for the hosted API
 
-You can access the hosted API of the project through this link https://casting-klimchenkov.herokuapp.com/movies
+You can access the hosted API of the project through this link https://casting-klimchenkov.herokuapp.com
 
-<a name="Local_run></a>
+<a name="Local_run"></a>
 
 ## Deploy and run the project locally
 
@@ -37,7 +40,7 @@ python -m virtualenv env
 pip install -r requirements.txt
 ```
 
-3. Set the enviroment variables. Envs are stored in the setup.sh file. It sets database configuration and credentials and also sets AUTH0 connection details and bearer tokens for RBAC. You may need to change database variables to access your local database server. You also may need to change commands to set the `envs`, as they are given for `git bash for Windows`.
+3. Set the enviroment variables. Envs are stored in the setup.sh file. It sets database configuration and credentials and also sets AUTH0 connection details and bearer tokens for RBAC. You may need to change database variables to access your local database server. You may also need to change commands to set the `envs`, as they are given for `git bash for Windows`.
 
 - Open `setup.sh` with your editor of choice
 - Find global variable with the name `DATABASE_URL`:
@@ -65,9 +68,181 @@ $ . setup.sh
 $ python app.py
 ```
 
+<a name="API"></a>
+
+## API documentation
+
+Here you can find details of all existing endpoints of the application. Existing endpoints are:
+
+- GET /actors and /movies
+- DELETE /actors/ and /movies/
+- POST /actors and /movies and
+- PATCH /actors/ and /movies/
+
+### GET '/api/v1.0/movies' 
+
+- Fetches details of all existing movies, including title and release date. 
+- Returns list of movies and boolean 'Success'
+
+Example response:
+```json
+{
+    "Movies": [
+        {
+            "ID": 1,
+            "Release date": "Wed, 14 Dec 1988 00:00:00 GMT",
+            "Title": "Rain man"
+        },
+        {
+            "ID": 2,
+            "Release date": "Wed, 22 May 1996 00:00:00 GMT",
+            "Title": "Mission impossible"
+        }, ...
+        ],
+    "Success": true
+}
+```
+
+### GET '/api/v1.0/actors' 
+
+- Fetches details of all existing actors, including name, age and gender. 
+- Returns list of movies and boolean 'Success'
+
+Example response:
+```json
+{
+    "Actors": [
+        {
+            "Age": 52,
+            "Gender": "Male",
+            "ID": 1,
+            "Name": "Matt Daemon"
+        },
+        {
+            "Age": 53,
+            "Gender": "Male",
+            "ID": 2,
+            "Name": "Matthew McConaughey"
+        },...
+    ],
+    "Success": true
+}
+```
+
+### POST '/api/v1.0/movies' 
+
+- Sends a post request in order to add a new movie
+- Request Body:
+
+```json
+{
+    "Release date": "Some release date in yyyy.mm.dd format",
+    "Title": "Some title of the movie"
+}
+```
+
+### POST '/api/v1.0/actors' 
+
+- Sends a post request in order to add a new actor
+- Request Body:
+
+```json
+{
+    "Age": "Some actors age",
+    "Gender": "Some actors gender",
+    "Name": "Some actors name"
+}
+```
+
+### DELETE '/api/v1.0/movies/${id}'
+
+- Deletes a specified movie using the id of the movie
+- Request Arguments: id - integer
+- Returns: Appropriate HTTP status code and the id of the deleted movie
 
 
+### DELETE '/api/v1.0/actors/${id}'
 
+- Deletes a specified actor using the id of the actor
+- Request Arguments: id - integer
+- Returns: Appropriate HTTP status code and the id of the deleted actor
 
+### PATCH '/api/v1.0/movies/${id}'
+
+- Edit an existing Movie information
+- Request Arguments: id - integer
+- Request Headers (application/json)   
+```json
+{
+    "Release date"(optional): "Some release date in yyyy.mm.dd format",
+    "Title"(optional): "Some title of the movie"
+}
+```
+- Returns: Appropriate HTTP status and updated movie details.
+- Example response:
+```json
+{
+    "Movie": {
+        "ID": "Some movie ID",
+        "Release date": "Some movie release date",
+        "Title": "Some movie title"
+    },
+    "Success": true
+}
+```
+
+### PATCH '/api/v1.0/actors/${id}'
+
+- Edit an existing Actor information
+- Request Arguments: id - integer
+- Request Headers (application/json)   
+
+```json
+{
+    "Age"(optional): "Some actors age",
+    "Gender"(optional): "Some actors gender",
+    "Name"(optional): "Some actors name"
+}
+```
+- Returns: Appropriate HTTP status and updated actor details.
+- Example response:
+```json
+{
+    "Actor": {
+        "Age": Some actors age,
+        "Gender": Some actors gender,
+        "ID": Some actors ID,
+        "Name": Some actors name
+    },
+    "Success": true
+}
+```
+
+<a name="tests"></a>
+## Testing
+
+To run the tests: 
+- Navigate to projects directory
+- Make sure you have Postgres server running
+- Make sure you've already ran the setup.sh script, which set the actual bearer tokens for the existing roles
+- Run the `test_db_setup.sh` script, it will create and populate casting_test database from the casting_test.sql file:
+```bash
+$ . test_db_setup.sh
+```
+- Run the test_app.py:
+```bash
+$ python test_app.py
+```
+- It will run 6 test for RBAC behaviour and 16 test for endpoints, both for success and errors.
+- After running the tests, you should get the following response:
+```python
+$ python test_app.py
+----------------------------------------------------------------------
+Ran 22 tests in 26.123s
+
+OK
+```
+<a name="RBAC"></a>
+##
 
 
