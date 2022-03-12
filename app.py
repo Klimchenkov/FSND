@@ -120,7 +120,7 @@ def create_app(test_config=None):
   @requires_auth(permission='change:movies')
   def change_movie(payload, movie_id):
     movie = Movie.query.get_or_404(movie_id)
-    body = request.get_json() 
+    body = request.get_json()
     title = body.get('title', None)
     release_date = body.get('release_date', None)
     try:

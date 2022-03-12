@@ -1,6 +1,8 @@
 #!/bin/bash
 
 export DATABASE_URL="postgresql://postgres:abc@localhost:5432/casting"
+export PGUSER=postgres
+export PGPASSWORD=abc
 #export DATABASE_URL="postgres://fziaojwswdqvha:dd61db22d803ed684a5f09639731618300a5d8d107023c90348fbcd9174fce39@ec2-54-157-160-218.compute-1.amazonaws.com:5432/djtfr6jjsrsoe"
 export AUTH_DOMAIN="dev-znyh0grc.us.auth0.com"
 export ALGORITHMS=['RS256']
