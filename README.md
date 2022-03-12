@@ -7,7 +7,7 @@
 3. [Deploy and run the project locally](#Local_run)
 4. [API documentation](#API)
 5. [Testing](#tests)
-6. [RBAC controls](#RBAC)
+6. [Authentication and RBAC controls](#RBAC)
 
 <a name="motivation"></a>
 
@@ -174,8 +174,8 @@ Example response:
 - Request Headers (application/json)   
 ```json
 {
-    "Release date"(optional): "Some release date in yyyy.mm.dd format",
-    "Title"(optional): "Some title of the movie"
+    "Release date(optional)": "Some release date in yyyy.mm.dd format",
+    "Title(optional)": "Some title of the movie"
 }
 ```
 - Returns: Appropriate HTTP status and updated movie details.
@@ -199,9 +199,9 @@ Example response:
 
 ```json
 {
-    "Age"(optional): "Some actors age",
-    "Gender"(optional): "Some actors gender",
-    "Name"(optional): "Some actors name"
+    "Age(optional)": "Some actors age",
+    "Gender(optional)": "Some actors gender",
+    "Name(optional)": "Some actors name"
 }
 ```
 - Returns: Appropriate HTTP status and updated actor details.
@@ -209,10 +209,10 @@ Example response:
 ```json
 {
     "Actor": {
-        "Age": Some actors age,
-        "Gender": Some actors gender,
-        "ID": Some actors ID,
-        "Name": Some actors name
+        "Age": "Some actors age",
+        "Gender": "Some actors gender",
+        "ID": "Some actors ID",
+        "Name": "Some actors name"
     },
     "Success": true
 }
@@ -243,6 +243,30 @@ Ran 22 tests in 26.123s
 OK
 ```
 <a name="RBAC"></a>
-##
+## Authentication and RBAC controls
+There are 3 existing roles with special permissions:
+
+- Casting Assistant
+    - Can view actors and movies
+- Casting Director
+    - All permissions a Casting Assistant has and…
+    - Add or delete an actor from the database
+    - Modify actors or movies
+- Executive Producer
+    - All permissions a Casting Director has and…
+    - Add or delete a movie from the database
+
+You can find actual tokens for each of this role in the `setup.sh` file. Actual tokens are set up as enviromental variables. To access endpoints of the running app you can run curl commands in your `bash`. Make sure you run `setup.sh` script first. 
+
+For example, to access `/movies` endpoint in the role of casting_assistant_token run the following command:
+``` bash
+curl https://casting-klimchenkov.herokuapp.com/movies -H "Authorization: $casting_assistant_token"
+```
+You should get the following response:
+```bash
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   662  100   662    0     0    643      0  0:00:01  0:00:01 --:--:--   645{"Movies":[{"ID":2,"Release date":"Wed, 22 May 1996 00:00:00 GMT","Title":"Mission impossible"},{"ID":3,"Release date":"Fri, 14 Dec 2001 00:00:00 GMT","Title":"Vanilla Sky"},{"ID":4,"Release date":"Wed, 11 Dec 1996 00:00:00 GMT","Title":"Jerry Maguire"},{"ID":5,"Release date":"Sat, 08 Dec 2018 00:00:00 GMT","Title":"Icebox"},{"ID":6,"Release date":"Fri, 04 Mar 2022 00:00:00 GMT","Title":"The Batman"},{"ID":8,"Release date":"Fri, 09 Jan 1998 00:00:00 GMT","Title":"Good Will Hunting"},{"ID":9,"Release date":"Fri, 15 Nov 2019 00:00:00 GMT","Title":"Ford vs Ferrari"},{"ID":1,"Release date":"Thu, 13 Jan 2000 00:00:00 GMT","Title":"Rain man"}],"Success":true}
+```
 
 
